@@ -131,7 +131,7 @@ void print_call_stack() {
     #elif __SUNPRO_CC
         REPORT("Call stack info:\n");
         printstack(fileno(stdout));
-    #elif _WIN32_WINNT > 0x0501 && _MSC_VER && !__TBB_WIN8UI_SUPPORT
+    #elif _WIN32_WINNT > 0x0501 && _MSC_VER>=1500 && !__TBB_WIN8UI_SUPPORT
         const int sz = 62; // XP limitation for number of frames
         void *buff[sz];
         int n = CaptureStackBackTrace(0, sz, buff, NULL);
@@ -716,6 +716,31 @@ public:
             a = Primes[seed % (sizeof(Primes) / sizeof(Primes[0]))];
         }
     };
+    int SetEnv( const char *envname, const char *envval ) {
+        ASSERT( envname && envval, "Harness::SetEnv() requires two valid C strings" );
+#if __TBB_WIN8UI_SUPPORT
+        ASSERT( false, "Harness::SetEnv() should not be called in code built for win8ui" );
+        return -1;
+#elif !(_MSC_VER || __MINGW32__ || __MINGW64__)
+        // On POSIX systems use setenv
+        return setenv(envname, envval, /*overwrite=*/1);
+#elif __STDC_SECURE_LIB__>=200411
+        // this macro is set in VC & MinGW if secure API functions are present
+        return _putenv_s(envname, envval);
+#else
+        // If no secure API on Windows, use _putenv
+        size_t namelen = strlen(envname), valuelen = strlen(envval);
+        char* buf = new char[namelen+valuelen+2];
+        strncpy(buf, envname, namelen);
+        buf[namelen] = '=';
+        strncpy(buf+namelen+1, envval, valuelen);
+        buf[namelen+1+valuelen] = char(0);
+        int status = _putenv(buf);
+        delete[] buf;
+        return status;
+#endif
+    }
+
 } // namespace Harness
 
 #endif /* tbb_tests_harness_H */

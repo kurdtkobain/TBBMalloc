@@ -106,6 +106,11 @@ Library Issues
         of Microsoft* Visual C++ 10.0 runtime (msvcp100d.dll) in order
         to run.
 
+    - For applications linked with the debug version of Microsoft*
+        Universal CRT (ucrtbased.dll, used since Microsoft Visual C++
+        14.0) dynamic replacement of memory management functions
+        is not supported.
+
     - If an application uses static MSVCRT libraries or the Intel TBB
         library built with static MSVCRT (vc_mt variant), and throws
         an exception from a functor passed to task_group::run_and_wait(),
@@ -128,8 +133,8 @@ Library Issues
         OMP_PROC_BIND, as well as programmatically setting thread
         affinity before Intel TBB task scheduler is initialized.
         An affinity mask set for a thread that initializes Intel TBB
-        limits the number of worker threads used by default in the task
-        scheduler.
+        may limit the number of worker threads used by default
+        in the task scheduler.
 
     - If an open source version of Intel TBB is installed to a system
         folder like /usr/lib64 on Linux OS, examples may fail to link
@@ -156,6 +161,12 @@ Library Issues
     - On Linux* OS with some versions of gcc runtime (e.g. 4.4.7,
         4.8.2, and 4.9.2), the destructor of a task_group might not
         throw missing_wait exception.
+
+    - On OS X* 10.11 some examples might fail to run via makefiles in
+        case System Integrity Protection is enabled. In such case
+        instead of `make <args>` use the following command:
+        `run_cmd="DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH" make <args>`
+        or run executables directly.
 
 ------------------------------------------------------------------------
 Copyright (C) 2005-2015 Intel Corporation.  All Rights Reserved.

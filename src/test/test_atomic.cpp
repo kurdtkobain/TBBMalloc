@@ -472,7 +472,7 @@ namespace TestConstExprInitializationOfGlobalObjectsHelper{
        static_before(){ result = (static_atomic==ct_value); }            \
     } ;                                                                  \
                                                                          \
-    typename tester<T>::static_before tester<T>::static_before_;         \
+    tester<T>::static_before tester<T>::static_before_;                  \
     tbb::atomic<T> tester<T>::static_atomic(ct_value);                   \
                                                                          \
     auto_registered_tests_helper::registration<T> tester<T>::registered; \
@@ -486,11 +486,15 @@ namespace TestConstExprInitializationOfGlobalObjectsHelper{
     }
 
     void CallExprInitTests(){
+#   if __TBB_STATIC_CONSTEXPR_INIT_BROKEN
+        REPORT("Known issue: Compile-time initialization fails for static tbb::atomic variables\n");
+#   else
         using namespace auto_registered_tests_helper;
         for (size_t i =0; i<const_expr_tests.size(); ++i){
             (*const_expr_tests[i])();
         }
-        REMARK("ran  %d consrexpr static init test \n",const_expr_tests.size());
+        REMARK("ran %d constexpr static init test \n",const_expr_tests.size());
+#   endif
     }
 
     //TODO: unify somehow list of tested types with one in TestMain

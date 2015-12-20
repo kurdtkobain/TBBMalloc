@@ -163,8 +163,8 @@ private:
     market ( unsigned workers_soft_limit, unsigned workers_hard_limit, size_t stack_size );
 
     //! Factory method creating new market object
-    static market& global_market ( unsigned max_num_workers = 0, size_t stack_size = 0,
-                                   bool default_concurrency_requested = false, bool is_public = false );
+    static market& global_market ( bool is_public, unsigned max_num_workers = 0, size_t stack_size = 0,
+                                   bool default_concurrency_requested = false);
 
     //! Destroys and deallocates market object created by market::create()
     void destroy ();
@@ -256,7 +256,7 @@ public:
     //! Creates an arena object
     /** If necessary, also creates global market instance, and boosts its ref count.
         Each call to create_arena() must be matched by the call to arena::free_arena(). **/
-    static arena* create_arena ( int num_slots, size_t stack_size, bool default_concurrency_requested );
+    static arena* create_arena ( int num_slots, int num_reserved_slots, size_t stack_size, bool default_concurrency_requested );
 
     //! Removes the arena from the market's list
     void try_destroy_arena ( arena*, uintptr_t aba_epoch );

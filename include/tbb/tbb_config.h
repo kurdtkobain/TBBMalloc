@@ -138,13 +138,12 @@
     #endif
     #define __TBB_STATIC_ASSERT_PRESENT               (__INTEL_CXX11_MODE__ || _MSC_VER >= 1600)
     #define __TBB_CPP11_TUPLE_PRESENT                 (_MSC_VER >= 1600 || (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION >= 40300))
-    /**Intel C++ compiler 14.0 crashes on using __has_include. When it fixed, condition will need to be updated. **/
     #if (__clang__ && __INTEL_COMPILER > 1400)
+        /* Older versions of Intel Compiler do not have __has_include */
         #if (__has_feature(__cxx_generalized_initializers__) && __has_include(<initializer_list>))
             #define __TBB_INITIALIZER_LISTS_PRESENT   1
         #endif
     #else
-        /** TODO: when MSVC2013 is supported by Intel C++ compiler, it will be enabled silently by compiler, so rule will need to be updated.**/
         #define __TBB_INITIALIZER_LISTS_PRESENT       __INTEL_CXX11_MODE__ && __INTEL_COMPILER >= 1400 && (_MSC_VER >= 1800 || __TBB_GCC_VERSION >= 40400 || _LIBCPP_VERSION)
     #endif
     
@@ -206,7 +205,7 @@
     #define __TBB_STATIC_ASSERT_PRESENT               (_MSC_VER >= 1600)
     #define __TBB_CPP11_TUPLE_PRESENT                 (_MSC_VER >= 1600)
     #define __TBB_INITIALIZER_LISTS_PRESENT           (_MSC_VER >= 1800)
-    #define __TBB_CONSTEXPR_PRESENT                   0
+    #define __TBB_CONSTEXPR_PRESENT                   (_MSC_VER >= 1900)
     #define __TBB_DEFAULTED_AND_DELETED_FUNC_PRESENT  (_MSC_VER >= 1800)
     #define __TBB_NOEXCEPT_PRESENT                    (_MSC_VER >= 1900)
     #define __TBB_CPP11_STD_BEGIN_END_PRESENT         (_MSC_VER >= 1700)
@@ -232,9 +231,9 @@
 // C++11 standard library features
 
 #define __TBB_CPP11_VARIADIC_TUPLE_PRESENT          (!_MSC_VER || _MSC_VER >=1800)
-#define __TBB_CPP11_TYPE_PROPERTIES_PRESENT         (_LIBCPP_VERSION || _MSC_VER >= 1700)
+#define __TBB_CPP11_TYPE_PROPERTIES_PRESENT         (_LIBCPP_VERSION || _MSC_VER >= 1700 || (__TBB_GCC_VERSION >= 50000 && __GXX_EXPERIMENTAL_CXX0X__))
 #define __TBB_TR1_TYPE_PROPERTIES_IN_STD_PRESENT    (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION >= 40300 || _MSC_VER >= 1600)
-// GCC has a partial support of type properties
+// GCC supported some of type properties since 4.7
 #define __TBB_CPP11_IS_COPY_CONSTRUCTIBLE_PRESENT   (__GXX_EXPERIMENTAL_CXX0X__ && __TBB_GCC_VERSION >= 40700 || __TBB_CPP11_TYPE_PROPERTIES_PRESENT)
 
 // In GCC and MSVC, implementation of std::move_if_noexcept is not aligned with noexcept
@@ -322,23 +321,21 @@
 #endif
 
 #ifndef TBB_IMPLEMENT_CPP0X
-    /** By default, use C++11 classes if available **/
-    #if __GNUC__==4 && __GNUC_MINOR__>=4 && __GXX_EXPERIMENTAL_CXX0X__
-        #define TBB_IMPLEMENT_CPP0X 0
-    #elif __clang__ && __cplusplus >= 201103L
-        //TODO: consider introducing separate macros for each file?
-        //prevent injection of corresponding tbb names into std:: namespace if native headers are present
-        #if __has_include(<thread>) || __has_include(<condition_variable>)
-            #define TBB_IMPLEMENT_CPP0X 0
+/** By default, use C++11 classes if available **/
+    #if __clang__
+        /* Old versions of Intel Compiler do not have __has_include */
+        #if (__INTEL_COMPILER && __INTEL_COMPILER <= 1400) 
+            #define TBB_IMPLEMENT_CPP0X !(_LIBCPP_VERSION && (__cplusplus >= 201103L))
         #else
-            #define TBB_IMPLEMENT_CPP0X 1
+            #define TBB_IMPLEMENT_CPP0X (__cplusplus < 201103L || (!__has_include(<thread>) && !__has_include(<condition_variable>)))
         #endif
-    #elif _MSC_VER>=1700
-        #define TBB_IMPLEMENT_CPP0X 0
-    #elif __STDCPP_THREADS__
-        #define TBB_IMPLEMENT_CPP0X 0
+    #elif __GNUC__
+        #define TBB_IMPLEMENT_CPP0X (__TBB_GCC_VERSION < 40400 || !__GXX_EXPERIMENTAL_CXX0X__)
+    #elif _MSC_VER
+        #define TBB_IMPLEMENT_CPP0X (_MSC_VER < 1700)
     #else
-        #define TBB_IMPLEMENT_CPP0X 1
+        // TODO: Reconsider general approach to be more reliable, e.g. (!(__cplusplus >= 201103L && __ STDC_HOSTED__))
+        #define TBB_IMPLEMENT_CPP0X (!__STDCPP_THREADS__)
     #endif
 #endif /* TBB_IMPLEMENT_CPP0X */
 
@@ -420,6 +417,10 @@
 #endif /* __TBB_SLEEP_PERMISSION */
 
 #if TBB_PREVIEW_FLOW_GRAPH_TRACE
+// Users of flow-graph trace need to explicitly link against the preview library.  This
+// prevents the linker from implicitly linking an application with a preview version of
+// TBB and unexpectedly bringing in other community preview features, which might change
+// the behavior of the application.
 #define __TBB_NO_IMPLICIT_LINKAGE 1
 #endif /* TBB_PREVIEW_FLOW_GRAPH_TRACE */
 
@@ -628,7 +629,7 @@
     #define __TBB_FORCE_64BIT_ALIGNMENT_BROKEN 0
 #endif
 
-#if __TBB_DEFAULTED_AND_DELETED_FUNC_PRESENT && __TBB_GCC_VERSION < 40700 && !defined(__INTEL_COMPILER) && !defined (__clang__)
+#if __GNUC__ && !__INTEL_COMPILER && !__clang__ && __TBB_DEFAULTED_AND_DELETED_FUNC_PRESENT && __TBB_GCC_VERSION < 40700
     #define __TBB_ZERO_INIT_WITH_DEFAULTED_CTOR_BROKEN 1
 #endif
 
@@ -670,6 +671,7 @@
 #define __TBB_FLOW_GRAPH_CPP11_FEATURES         (__TBB_CPP11_VARIADIC_TEMPLATES_PRESENT \
                                                 && __TBB_CPP11_RVALUE_REF_PRESENT && __TBB_CPP11_AUTO_PRESENT) \
                                                 && __TBB_CPP11_VARIADIC_TUPLE_PRESENT && !__TBB_UPCAST_OF_TUPLE_OF_REF_BROKEN
-#define __TBB_PREVIEW_ASYNC_NODE TBB_PREVIEW_FLOW_GRAPH_NODES
-#define __TBB_PREVIEW_OPENCL_NODE              __TBB_FLOW_GRAPH_CPP11_FEATURES && TBB_PREVIEW_FLOW_GRAPH_NODES
+#define __TBB_PREVIEW_ASYNC_NODE (__TBB_FLOW_GRAPH_CPP11_FEATURES && TBB_PREVIEW_FLOW_GRAPH_NODES)
+#define __TBB_PREVIEW_OPENCL_NODE               (__TBB_FLOW_GRAPH_CPP11_FEATURES && TBB_PREVIEW_FLOW_GRAPH_NODES && !TBB_IMPLEMENT_CPP0X)
+#define __TBB_PREVIEW_MESSAGE_BASED_KEY_MATCHING (TBB_PREVIEW_FLOW_GRAPH_FEATURES || __TBB_PREVIEW_OPENCL_NODE)
 #endif /* __TBB_tbb_config_H */

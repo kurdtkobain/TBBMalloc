@@ -155,22 +155,10 @@
 		<CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
 		<CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|x64'"/>
 		<CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'"/>
-		<TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">tbb4malloc_bi_debug</TargetName>
-		<TargetName Condition="'$(Configuration)|$(Platform)'=='Debug-MT|Win32'">tbb4malloc_bi_debug</TargetName>
-		<TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">tbb4malloc_bi_debug</TargetName>
-		<TargetName Condition="'$(Configuration)|$(Platform)'=='Debug-MT|x64'">tbb4malloc_bi_debug</TargetName>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-MT|Win32'">
-		<TargetName>tbb4malloc_bi</TargetName>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-		<TargetName>tbb4malloc_bi</TargetName>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-MT|x64'">
-		<TargetName>tbb4malloc_bi</TargetName>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-		<TargetName>tbb4malloc_bi</TargetName>
+		<TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectName)_debug</TargetName>
+		<TargetName Condition="'$(Configuration)|$(Platform)'=='Debug-MT|Win32'">$(ProjectName)_debug</TargetName>
+		<TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectName)_debug</TargetName>
+		<TargetName Condition="'$(Configuration)|$(Platform)'=='Debug-MT|x64'">$(ProjectName)_debug</TargetName>
 	</PropertyGroup>
 	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
 		<ClCompile>
@@ -190,7 +178,7 @@
 		</ClCompile>
 		<Link>
 			<AdditionalOptions>/DLL /MAP /DEBUG /fixed:no /INCREMENTAL:NO  /DEF:"$(IntDir)tbbmalloc.def" %(AdditionalOptions)</AdditionalOptions>
-			<OutputFile>$(OutDir)$(TargetFileName)</OutputFile>
+			<OutputFile>$(OutDir)tbbmalloc_debug.dll</OutputFile>
 			<GenerateDebugInformation>true</GenerateDebugInformation>
 			<SubSystem>Windows</SubSystem>
 			<RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -222,7 +210,7 @@
 		</ClCompile>
 		<Link>
 			<AdditionalOptions>/nologo /DLL /MAP /DEBUG /fixed:no /INCREMENTAL:NO  /DEF:"$(IntDir)tbbmalloc.def" %(AdditionalOptions)</AdditionalOptions>
-			<OutputFile>$(OutDir)$(TargetFileName)</OutputFile>
+			<OutputFile>$(OutDir)tbbmalloc_debug.dll</OutputFile>
 			<GenerateDebugInformation>true</GenerateDebugInformation>
 			<SubSystem>Windows</SubSystem>
 			<RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -243,14 +231,10 @@
 			</PrecompiledHeader>
 			<WarningLevel>Level4</WarningLevel>
 			<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-			<Optimization>Full</Optimization>
-			<IntrinsicFunctions>true</IntrinsicFunctions>
-			<FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-			<OmitFramePointers>true</OmitFramePointers>
 		</ClCompile>
 		<Link>
 			<AdditionalOptions>/nologo /DLL /MAP /DEBUG /fixed:no /INCREMENTAL:NO  /DEF:"$(IntDir)tbbmalloc.def" %(AdditionalOptions)</AdditionalOptions>
-			<OutputFile>$(OutDir)$(TargetFileName)</OutputFile>
+			<OutputFile>$(OutDir)tbbmalloc.dll</OutputFile>
 			<GenerateDebugInformation>true</GenerateDebugInformation>
 			<SubSystem>Windows</SubSystem>
 			<OptimizeReferences>true</OptimizeReferences>
@@ -280,7 +264,7 @@
 		</ClCompile>
 		<Link>
 			<AdditionalOptions>/nologo /DLL /MAP /DEBUG /fixed:no /INCREMENTAL:NO /DEF:"$(IntDir)tbbmalloc.def" %(AdditionalOptions)</AdditionalOptions>
-			<OutputFile>$(OutDir)$(TargetFileName)</OutputFile>
+			<OutputFile>$(OutDir)tbbmalloc.dll</OutputFile>
 			<GenerateDebugInformation>true</GenerateDebugInformation>
 			<SubSystem>Windows</SubSystem>
 			<OptimizeReferences>true</OptimizeReferences>
@@ -309,7 +293,7 @@
 		</ClCompile>
 		<Link>
 			<AdditionalOptions>/DLL /MAP /DEBUG /fixed:no /INCREMENTAL:NO  /DEF:"$(IntDir)tbbmalloc.def" %(AdditionalOptions)</AdditionalOptions>
-			<OutputFile>$(OutDir)$(TargetFileName)</OutputFile>
+			<OutputFile>$(OutDir)tbbmalloc_debug.dll</OutputFile>
 			<GenerateDebugInformation>true</GenerateDebugInformation>
 			<SubSystem>Windows</SubSystem>
 			<RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -341,7 +325,7 @@
 		</ClCompile>
 		<Link>
 			<AdditionalOptions>/nologo /DLL /MAP /DEBUG /fixed:no /INCREMENTAL:NO  /DEF:"$(IntDir)tbbmalloc.def" %(AdditionalOptions)</AdditionalOptions>
-			<OutputFile>$(OutDir)$(TargetFileName)</OutputFile>
+			<OutputFile>$(OutDir)tbbmalloc_debug.dll</OutputFile>
 			<GenerateDebugInformation>true</GenerateDebugInformation>
 			<SubSystem>Windows</SubSystem>
 			<RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -362,14 +346,10 @@
 			</PrecompiledHeader>
 			<WarningLevel>Level4</WarningLevel>
 			<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-			<Optimization>Full</Optimization>
-			<IntrinsicFunctions>true</IntrinsicFunctions>
-			<FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-			<OmitFramePointers>true</OmitFramePointers>
 		</ClCompile>
 		<Link>
 			<AdditionalOptions>/nologo /DLL /MAP /DEBUG /fixed:no /INCREMENTAL:NO  /DEF:"$(IntDir)tbbmalloc.def" %(AdditionalOptions)</AdditionalOptions>
-			<OutputFile>$(OutDir)$(TargetFileName)</OutputFile>
+			<OutputFile>$(OutDir)tbbmalloc.dll</OutputFile>
 			<GenerateDebugInformation>true</GenerateDebugInformation>
 			<SubSystem>Windows</SubSystem>
 			<OptimizeReferences>true</OptimizeReferences>
@@ -379,11 +359,6 @@
 			</DataExecutionPrevention>
 			<TargetMachine>MachineX86</TargetMachine>
 		</Link>
-		<PostBuildEvent>
-			<Command>copy /Y $(TargetPath) $(SolutionDir)..\..\..\..\
-copy /Y $(TargetDir)$(TargetName).pdb $(SolutionDir)..\..\..\..\
-copy /Y $(TargetDir)$(TargetName).map $(SolutionDir)..\..\..\..\</Command>
-		</PostBuildEvent>
 	</ItemDefinitionGroup>
 	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release-MT|x64'">
 		<Midl>
@@ -404,7 +379,7 @@ copy /Y $(TargetDir)$(TargetName).map $(SolutionDir)..\..\..\..\</Command>
 		</ClCompile>
 		<Link>
 			<AdditionalOptions>/nologo /DLL /MAP /DEBUG /fixed:no /INCREMENTAL:NO /DEF:"$(IntDir)tbbmalloc.def" %(AdditionalOptions)</AdditionalOptions>
-			<OutputFile>$(OutDir)$(TargetFileName)</OutputFile>
+			<OutputFile>$(OutDir)tbbmalloc.dll</OutputFile>
 			<GenerateDebugInformation>true</GenerateDebugInformation>
 			<SubSystem>Windows</SubSystem>
 			<OptimizeReferences>true</OptimizeReferences>

@@ -230,10 +230,6 @@
 			</PrecompiledHeader>
 			<WarningLevel>Level4</WarningLevel>
 			<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-			<Optimization>Full</Optimization>
-			<IntrinsicFunctions>true</IntrinsicFunctions>
-			<FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-			<OmitFramePointers>true</OmitFramePointers>
 		</ClCompile>
 		<Link>
 			<AdditionalOptions>/nologo /DLL /MAP /DEBUG /fixed:no /INCREMENTAL:NO   %(AdditionalOptions)</AdditionalOptions>
@@ -348,10 +344,6 @@
 			</PrecompiledHeader>
 			<WarningLevel>Level4</WarningLevel>
 			<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-			<Optimization>Full</Optimization>
-			<IntrinsicFunctions>true</IntrinsicFunctions>
-			<FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-			<OmitFramePointers>true</OmitFramePointers>
 		</ClCompile>
 		<Link>
 			<AdditionalOptions>/nologo /DLL /MAP /DEBUG /fixed:no /INCREMENTAL:NO   %(AdditionalOptions)</AdditionalOptions>
