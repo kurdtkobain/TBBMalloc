@@ -80,6 +80,10 @@ void __TBB_EXPORTED_FUNC scalable_aligned_free (void* ptr);
     @ingroup memory_allocation */
 size_t __TBB_EXPORTED_FUNC scalable_msize (void* ptr);
 
+/** total memory used (committed) by the allocator
+@ingroup memory_allocation */
+size_t __TBB_EXPORTED_FUNC scalable_footprint();
+
 /* Results for scalable_allocation_* functions */
 typedef enum {
     TBBMALLOC_OK,

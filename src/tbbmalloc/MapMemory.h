@@ -85,15 +85,34 @@ int UnmapMemory(void *area, size_t bytes)
 #elif (_WIN32 || _WIN64) && !_XBOX && !__TBB_WIN8UI_SUPPORT
 #include <windows.h>
 
+size_t MappedMemory;
+
 #define MEMORY_MAPPING_USES_MALLOC 0
 void* MapMemory (size_t bytes, bool)
 {
     /* Is VirtualAlloc thread safe? */
-    return VirtualAlloc(NULL, bytes, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+    void *ret = VirtualAlloc(NULL, bytes, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+    if (ret)
+    {
+      MEMORY_BASIC_INFORMATION info;
+      if (VirtualQuery(ret,&info,sizeof(info))==sizeof(info))
+      {
+        AtomicAdd((intptr_t &)MappedMemory,info.RegionSize);
+      }
+    }
+    return ret;
 }
 
 int UnmapMemory(void *area, size_t /*bytes*/)
 {
+    if (area)
+    {
+      MEMORY_BASIC_INFORMATION info;
+      if (VirtualQuery(area,&info,sizeof(info))==sizeof(info))
+      {
+        AtomicAdd((intptr_t &)MappedMemory,0-info.RegionSize);
+      }
+    }
     BOOL result = VirtualFree(area, 0, MEM_RELEASE);
     return !result;
 }

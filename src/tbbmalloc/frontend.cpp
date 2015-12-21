@@ -2607,6 +2607,13 @@ static size_t internalMsize(void* ptr)
     return 0;
 }
 
+extern size_t MappedMemory;
+
+static size_t internalFootprint()
+{
+	return MappedMemory;
+}
+
 } // namespace internal
 
 using namespace rml::internal;
@@ -2837,6 +2844,11 @@ extern "C" void * scalable_malloc(size_t size)
 
 extern "C" void scalable_free (void *object) {
     internalFree(object);
+}
+
+extern "C" size_t scalable_footprint()
+{
+	return internalFootprint();
 }
 
 #if MALLOC_ZONE_OVERLOAD_ENABLED
